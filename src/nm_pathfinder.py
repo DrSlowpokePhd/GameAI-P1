@@ -1,49 +1,1 @@
-def find_path (source_point, destination_point, mesh):
-    """
-    Searches for a path from source_point to destination_point through the mesh
-    Args: 
-        source_point: starting point of the pathfinder
-        destination_point: the ultimate goal the pathfinder must reach
-        mesh: pathway constraints the path adheres to
-    Returns: 
-        A path (list of points) from source_point to destination_point if exists
-        A list of boxes explored by the algorithm
-    """
-
-    # part 1: Breadth first search
-
-    path = []
-    boxes = [] # {} # had to change the dict to a list due to issues in nm_interactive.py
-    queue = [] # queue for Breadth First Search
-    print ("source point: ", source_point)
-    print ("destination point: ", destination_point)
-    
-    # 0 and 0 are placeholder values for the purpose of initializing source and destination box
-    source_box, destination_box = 0, 0
-    # find the source and destination boxes
-    for i in mesh['boxes']:
-        if source_point[0] > i[0] and source_point[0] < i[1] and source_point[1] > i[2] and source_point[1] < i[3]:
-            print("source box", i)
-            path.append(source_point)
-            destination_box = i
-        if destination_point[0] > i[0] and destination_point[0] < i[1] and destination_point[1] > i[2] and destination_point[1] < i[3]:
-            print("source box", i)
-            path.append(destination_point)
-            source_box = i
-            queue.append(i)
-    # the ACTUAL BFS implementation, box to box for now
-    
-    while queue:
-        current_box = queue.pop()
-        # print (current_box)
-        if current_box is destination_box:
-            break
-        print(mesh['adj'][current_box])
-        for box in mesh['adj'][current_box]:
-            if box not in boxes:
-                queue.insert(0, box)
-            
-        boxes.append(current_box)
-
-    # print(mesh['adj'])
-    return path, boxes
+def find_path (source_point, destination_point, mesh):    """    Searches for a path from source_point to destination_point through the mesh    Args:        source_point: starting point of the pathfinder        destination_point: the ultimate goal the pathfinder must reach        mesh: pathway constraints the path adheres to    Returns:        A path (list of points) from source_point to destination_point if exists        A list of boxes explored by the algorithm    """    # initialize source and destination boxes    source_box = (-1,-1,-1,-1)    destination_box = (-1,-1,-1,-1)        # unpacking the mesh dictionary.    all_boxes = mesh['boxes']    adj = mesh['adj']        # initialize return values.    path = []    boxes = {}        for box in all_boxes:        # find the source box        if source_point[0] > box[0] and source_point[0] < box[1]:            if source_point[1] > box[2] and source_point[1] < box[3]:                source_box = box       for box in all_boxes:        # find the destination box        if destination_point[0] > box[0] and destination_point[0] < box[1]:            if destination_point[1] > box[2] and destination_point[1] < box[3]:                destination_box = box        # testing code. DELETE EVENTUALLY.    #print(source_box)    #print(destination_box)        # if source and destination are invalid for some reason. Need to return error and exit.    if source_box == (-1,-1,-1,-1) or destination_box == (-1,-1,-1,-1):        print("No Path! Invalid source and/or destination!")        return path, boxes    # bfs for now. CHANGE LATER.    queue = []    queue.append(source_box)        i = 0    boxes[source_box] = source_box    while True:        # if queue is empty, we were not able to find the destination.        if not queue:            print("No path!")            return [],[]                    # get the box we are currently in.        current_box = queue.pop(0)                # end loop if destination is found.        if current_box == destination_box:            print("Destination found!")            print(i)            #boxes[destination_box] = prev_box            #path.append(destination_point)            break                # add point to path. TEST VERSION, DOESN'T MEET REQUIREMENTS        #if current_box != source_box:        #    path.append((current_box[0] + current_box[1] - current_box[0], current_box[2] + current_box[3] - current_box[2]))                # add boxes from adjaceny list of current_box to queue if they have not been visited        # and are not already in the queue.        for box in adj[current_box]:            if box not in boxes.keys() and box not in queue:                queue.append(box)                boxes[box] = current_box                # counter        i += 1            # construct path. Case 1: Src and Dest in same box. Case 2: Src and Dest in different boxes. TEST VERSION, DOESN'T MEET REQUIREMENTS    path.append(destination_point)    box = destination_box    while True:        if boxes[box] == source_box:            path.append(source_point)            break        else:            box = boxes[box]            path.append((box[0] + (box[1] - box[0])/2, box[2] + (box[3] - box[2])/2))        #print(path)    print(len(path))    #print(adj[source_box])        return path, boxes.keys()
