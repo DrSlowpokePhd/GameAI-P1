@@ -64,8 +64,22 @@ def find_path (source_point, destination_point, mesh):
             path.append(source_point)
             break
         else:
-            box = boxes[box]
-            path.append((box[0] + (box[1] - box[0])/2, box[2] + (box[3] - box[2])/2))
+            nextBox = boxes[box]
+            x_range = (max(box[0],nextBox[0]), min(box[1],nextBox[1]))
+            y_range = (max(box[2],nextBox[2]), min(box[3],nextBox[3]))
+            
+            prev_point = (path[-1])
+            closest_point = (-1,-1)
+            for x in range(x_range[0], x_range[1]+1):
+                for y in range(y_range[0], y_range[1]+1):
+                    d1 = ((closest_point[0] - prev_point[0])**2 + (closest_point[1] - prev_point[1])**2)**0.5
+                    d2 = ((x - prev_point[0])**2 + (y - prev_point[1])**2)**0.5
+                    if closest_point == (-1,-1) or d1 > d2:
+                        closest_point = (x,y)
+            #print(closest_point)
+            path.append(closest_point)
+            #path.append((box[0] + (box[1] - box[0])/2, box[2] + (box[3] - box[2])/2))
+            box = nextBox
     
     # print(mesh['adj'])
     return path, boxes.keys()
