@@ -56,7 +56,7 @@ def find_path (source_point, destination_point, mesh):
             
         #boxes.append(current_box)
     
-    # construct path. Case 1: Src and Dest in same box. Case 2: Src and Dest in different boxes. TEST VERSION, DOESN'T MEET REQUIREMENTS (draws lines between midpoints)
+    # construct path. Case 1: Src and Dest in same box. Case 2: Src and Dest in different boxes. Now draws between detail points.
     path.append(destination_point)
     box = destination_box
     while True:
